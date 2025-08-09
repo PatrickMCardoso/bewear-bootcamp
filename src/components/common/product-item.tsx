@@ -19,11 +19,11 @@ const ProductItem = ({ product }: ProductItemProps) => {
       <Image
         src={firstVariant.imageUrl}
         alt={firstVariant.name}
-        width={150}
-        height={150}
+        width={200}
+        height={200}
         className="rounded-3xl"
       />
-      <div className="flex max-w-[150px] flex-col gap-1">
+      <div className="flex max-w-[200px] flex-col gap-1">
         <p className="truncate text-sm font-medium">{product.name}</p>
         <p className="text-muted-foreground truncate text-xs font-medium">
           {product.description}

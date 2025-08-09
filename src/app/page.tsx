@@ -1,6 +1,7 @@
 import { desc } from "drizzle-orm";
 import Image from "next/image";
 
+import BrandList from "@/components/common/brand-list";
 import CategorySelector from "@/components/common/category-selector";
 import Footer from "@/components/common/footer";
 import { Header } from "@/components/common/header";
@@ -22,6 +23,16 @@ const Home = async () => {
     },
   });
 
+  const brands = [
+    { name: "Nike", logo: "/nike-logo.svg" },
+    { name: "Adidas", logo: "/adidas-logo.svg" },
+    { name: "Puma", logo: "/puma-logo.svg" },
+    { name: "New Balance", logo: "/newbalance-logo.svg" },
+    { name: "Converse", logo: "/converse-logo.svg" },
+    { name: "Polo", logo: "/polo-logo.svg" },
+    { name: "Zara", logo: "/zara-logo.svg" },
+  ];
+
   const categories = await db.query.categoryTable.findMany({});
 
   return (
@@ -38,6 +49,9 @@ const Home = async () => {
             className="h-auto w-full"
           />
         </div>
+
+        <BrandList title="Marcas parceiras" brands={brands} />
+
         <ProductList products={products} title="Mais vendidos" />
         <div className="px-5">
           <CategorySelector categories={categories} />
