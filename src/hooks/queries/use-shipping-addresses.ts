@@ -5,9 +5,14 @@ import { getShippingAddresses } from "@/actions/get-shipping-addresses";
 export const getShippingAddressesQueryKey = () =>
   ["shipping-addresses"] as const;
 
-export const useShippingAddresses = () => {
+interface UseShippingAddressesOptions {
+  initialData?: Awaited<ReturnType<typeof getShippingAddresses>>;
+}
+
+export const useShippingAddresses = (options?: UseShippingAddressesOptions) => {
   return useQuery({
     queryKey: getShippingAddressesQueryKey(),
     queryFn: getShippingAddresses,
+    initialData: options?.initialData,
   });
 };
