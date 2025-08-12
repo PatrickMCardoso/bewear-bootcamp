@@ -54,3 +54,4 @@
     - [`use-decrease-cart-product.ts`](mdc: src/hooks/mutations/use-decrease-cart-product.ts)
 - Sempre use a biblioteca "react-number-format" para criar
   inputs com máscaras.
+- Sempre crie e exporte uma função que retorne a query key de uma query e mutation key de uma mutation.
