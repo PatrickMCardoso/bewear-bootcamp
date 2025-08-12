@@ -42,7 +42,7 @@
 - **Server Actions** devem ser armazenadas em `src/actions`:
   - Cada server action deve ficar em uma **pasta** com dois arquivos: `index.ts` e `schema.ts`.
   - Sempre veja [`add-cart-product`](mdc: src/actions/add-cart-product) como referência.
-- Sempre que for necessário **interagir com o banco de dados**, use [`index.ts`](mdc: src/db/index.ts).
+- Sempre que for necessário **interagir com o banco de dados**, use [`index.ts`](mdc: src/db/index.ts). E o meu[`schema.ts`](mdc: src/db/schema.ts).
 - Use **React Query** para interagir com Server Actions em Client Components.
   - Sempre use como referência:
     - [`cart-item.tsx`](mdc: src/components/common/cart-item.tsx)

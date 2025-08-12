@@ -4,8 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
-import { z } from "zod";
+import { toast } from "sonner";
 
+import {
+  type CreateShippingAddressSchema,
+  createShippingAddressSchema,
+} from "@/actions/create-shipping-address/schema";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -18,33 +22,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-
-const shippingAddressSchema = z.object({
-  email: z
-    .string()
-    .min(1, "Email é obrigatório")
-    .refine((email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email), {
-      message: "E-mail inválido",
-    }),
-  recipientName: z.string().min(1, "Nome completo é obrigatório"),
-  cpfOrCnpj: z.string().min(11, "CPF é obrigatório"),
-  phone: z.string().min(1, "Celular é obrigatório"),
-  zipCode: z.string().min(8, "CEP é obrigatório"),
-  street: z.string().min(1, "Endereço é obrigatório"),
-  number: z.string().min(1, "Número é obrigatório"),
-  complement: z.string().optional(),
-  neighborhood: z.string().min(1, "Bairro é obrigatório"),
-  city: z.string().min(1, "Cidade é obrigatória"),
-  state: z.string().min(1, "Estado é obrigatório"),
-});
-
-type ShippingAddressFormValues = z.infer<typeof shippingAddressSchema>;
+import { useCreateShippingAddress } from "@/hooks/mutations/use-create-shipping-address";
 
 const Addresses = () => {
   const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
+  const createShippingAddressMutation = useCreateShippingAddress();
 
-  const form = useForm<ShippingAddressFormValues>({
-    resolver: zodResolver(shippingAddressSchema),
+  const form = useForm<CreateShippingAddressSchema>({
+    resolver: zodResolver(createShippingAddressSchema),
     defaultValues: {
       email: "",
       recipientName: "",
@@ -60,17 +45,22 @@ const Addresses = () => {
     },
   });
 
-  const onSubmit = async (values: ShippingAddressFormValues) => {
-    console.log("Form submitted:", values);
-
-    try {
-      // Here you would typically call a server action to save the address
-      // For now, we'll just simulate success
-      setSelectedAddress(null);
-      // You could add a toast notification here
-    } catch (error) {
-      console.error("Error saving address:", error);
-    }
+  const onSubmit = async (values: CreateShippingAddressSchema) => {
+    createShippingAddressMutation.mutate(values, {
+      onSuccess: (result) => {
+        if (result.success) {
+          toast.success(result.message);
+          form.reset();
+          setSelectedAddress(null);
+        } else {
+          toast.error(result.message);
+        }
+      },
+      onError: (error) => {
+        console.error("Error creating shipping address:", error);
+        toast.error("Erro ao salvar endereço");
+      },
+    });
   };
 
   return (
@@ -299,9 +289,9 @@ const Addresses = () => {
                   <div className="flex gap-2 pt-4">
                     <Button
                       type="submit"
-                      disabled={form.formState.isSubmitting}
+                      disabled={createShippingAddressMutation.isPending}
                     >
-                      {form.formState.isSubmitting
+                      {createShippingAddressMutation.isPending
                         ? "Salvando..."
                         : "Salvar Endereço"}
                     </Button>
