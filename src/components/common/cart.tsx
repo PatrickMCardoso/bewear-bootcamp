@@ -65,21 +65,16 @@ export const Cart = () => {
 
               <Separator />
 
-              <div className="flex items-center justify-between text-xs font-medium">
-                <p>Entrega</p>
-                <p>GRÁTIS</p>
-              </div>
-
-              <Separator />
-
-              <div className="flex items-center justify-between text-xs font-medium">
-                <p>Total</p>
-                <p>{formatCentsToBRL(cart?.totalPriceInCents ?? 0)}</p>
-              </div>
-
-              <Button className="mt-5 rounded-full" asChild>
+              <Button className="mt-3 rounded-full" asChild>
                 <Link href="/cart/identification">Finalizar Compra</Link>
               </Button>
+
+              <Link
+                href="/"
+                className="text-muted-foreground hover:text-foreground text-center text-sm underline"
+              >
+                Continuar comprando
+              </Link>
             </div>
           )}
         </div>

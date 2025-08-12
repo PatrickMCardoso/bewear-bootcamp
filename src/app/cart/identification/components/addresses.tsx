@@ -67,14 +67,12 @@ const Addresses = ({
           form.reset();
           setSelectedAddress(null);
 
-          // Vincular o novo endereço ao carrinho
           updateCartShippingAddressMutation.mutate(
             { shippingAddressId: result.data.id },
             {
               onSuccess: (cartResult) => {
                 if (cartResult.success) {
                   toast.success("Endereço vinculado ao carrinho!");
-                  // Recarrega a página para mostrar os dados atualizados
                   window.location.reload();
                 }
               },
@@ -105,7 +103,6 @@ const Addresses = ({
             toast.success(
               "Endereço selecionado! Continuando para o pagamento...",
             );
-            // Aqui você pode redirecionar para a próxima etapa do checkout
           } else {
             toast.error(result.message);
           }
