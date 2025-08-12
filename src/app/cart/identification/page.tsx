@@ -37,7 +37,10 @@ const IdentificationPage = async () => {
     <>
       <Header />
       <div className="px-5">
-        <Addresses shippingAddresses={shippingAddresses} />
+        <Addresses
+          shippingAddresses={shippingAddresses}
+          currentShippingAddressId={cart.shippingAddressId}
+        />
       </div>
     </>
   );

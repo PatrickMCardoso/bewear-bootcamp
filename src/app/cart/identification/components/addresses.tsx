@@ -25,22 +25,22 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { shippingAddressTable } from "@/db/schema";
 import { useCreateShippingAddress } from "@/hooks/mutations/use-create-shipping-address";
-import { useShippingAddresses } from "@/hooks/queries/use-shipping-addresses";
+import { useUpdateCartShippingAddress } from "@/hooks/mutations/use-update-cart-shipping-address";
 
 interface AddressesProps {
   shippingAddresses: (typeof shippingAddressTable.$inferSelect)[];
+  currentShippingAddressId?: string | null;
 }
 
-const Addresses = ({ shippingAddresses }: AddressesProps) => {
-  const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
+const Addresses = ({
+  shippingAddresses,
+  currentShippingAddressId,
+}: AddressesProps) => {
+  const [selectedAddress, setSelectedAddress] = useState<string | null>(() => {
+    return currentShippingAddressId ?? null;
+  });
   const createShippingAddressMutation = useCreateShippingAddress();
-  const { data: shippingAddressesData, isLoading: isLoadingAddresses } =
-    useShippingAddresses({
-      initialData: {
-        success: true,
-        data: shippingAddresses,
-      },
-    });
+  const updateCartShippingAddressMutation = useUpdateCartShippingAddress();
 
   const form = useForm<CreateShippingAddressSchema>({
     resolver: zodResolver(createShippingAddressSchema),
@@ -62,10 +62,27 @@ const Addresses = ({ shippingAddresses }: AddressesProps) => {
   const onSubmit = async (values: CreateShippingAddressSchema) => {
     createShippingAddressMutation.mutate(values, {
       onSuccess: (result) => {
-        if (result.success) {
+        if (result.success && result.data) {
           toast.success(result.message);
           form.reset();
           setSelectedAddress(null);
+
+          // Vincular o novo endereço ao carrinho
+          updateCartShippingAddressMutation.mutate(
+            { shippingAddressId: result.data.id },
+            {
+              onSuccess: (cartResult) => {
+                if (cartResult.success) {
+                  toast.success("Endereço vinculado ao carrinho!");
+                  // Recarrega a página para mostrar os dados atualizados
+                  window.location.reload();
+                }
+              },
+              onError: () => {
+                toast.error("Erro ao vincular endereço ao carrinho");
+              },
+            },
+          );
         } else {
           toast.error(result.message);
         }
@@ -77,67 +94,97 @@ const Addresses = ({ shippingAddresses }: AddressesProps) => {
     });
   };
 
+  const handleContinueWithExistingAddress = () => {
+    if (!selectedAddress || selectedAddress === "add_new") return;
+
+    updateCartShippingAddressMutation.mutate(
+      { shippingAddressId: selectedAddress },
+      {
+        onSuccess: (result) => {
+          if (result.success) {
+            toast.success(
+              "Endereço selecionado! Continuando para o pagamento...",
+            );
+            // Aqui você pode redirecionar para a próxima etapa do checkout
+          } else {
+            toast.error(result.message);
+          }
+        },
+        onError: (error) => {
+          console.error("Error updating cart shipping address:", error);
+          toast.error("Erro ao vincular endereço ao carrinho");
+        },
+      },
+    );
+  };
+
   return (
     <Card>
       <CardHeader>
         <CardTitle>Identificação</CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
-        <RadioGroup value={selectedAddress} onValueChange={setSelectedAddress}>
-          {isLoadingAddresses ? (
-            <div className="flex items-center justify-center py-4">
-              <p className="text-muted-foreground text-sm">
-                Carregando endereços...
-              </p>
-            </div>
-          ) : (
-            <>
-              {shippingAddressesData?.success &&
-                shippingAddressesData.data?.map((address) => (
-                  <Card key={address.id} className="p-4">
-                    <div className="flex items-start space-x-3">
-                      <RadioGroupItem
-                        value={address.id}
-                        id={address.id}
-                        className="mt-1"
-                      />
-                      <Label
-                        htmlFor={address.id}
-                        className="flex-1 cursor-pointer"
-                        aria-label={`Selecionar endereço: ${address.recipientName}, ${address.street}, ${address.number}`}
-                      >
-                        <div className="text-sm font-medium">
-                          {address.recipientName}, {address.street},{" "}
-                          {address.number}
-                          {address.complement &&
-                            `, ${address.complement}`}, {address.neighborhood},{" "}
-                          {address.city} - {address.state}, CEP:{" "}
-                          <PatternFormat
-                            value={address.zipCode}
-                            format="#####-###"
-                            displayType="text"
-                          />
-                        </div>
-                      </Label>
-                    </div>
-                  </Card>
-                ))}
-
-              <Card className="p-4">
-                <div className="flex items-center space-x-3">
-                  <RadioGroupItem value="add_new" id="add_new" />
-                  <label
-                    htmlFor="add_new"
-                    className="cursor-pointer text-sm font-medium"
+        <RadioGroup
+          value={selectedAddress || undefined}
+          onValueChange={setSelectedAddress}
+        >
+          <>
+            {shippingAddresses?.map((address) => (
+              <Card key={address.id} className="p-4">
+                <div className="flex items-start space-x-3">
+                  <RadioGroupItem
+                    value={address.id}
+                    id={address.id}
+                    className="mt-1"
+                  />
+                  <Label
+                    htmlFor={address.id}
+                    className="flex-1 cursor-pointer"
+                    aria-label={`Selecionar endereço: ${address.recipientName}, ${address.street}, ${address.number}`}
                   >
-                    Adicionar novo endereço
-                  </label>
+                    <div className="text-sm font-medium">
+                      {address.recipientName}, {address.street},{" "}
+                      {address.number}
+                      {address.complement && `, ${address.complement}`},{" "}
+                      {address.neighborhood}, {address.city} - {address.state},
+                      CEP:{" "}
+                      <PatternFormat
+                        value={address.zipCode}
+                        format="#####-###"
+                        displayType="text"
+                      />
+                    </div>
+                  </Label>
                 </div>
               </Card>
-            </>
-          )}
-        </RadioGroup>
+            ))}
 
+            <Card className="p-4">
+              <div className="flex items-center space-x-3">
+                <RadioGroupItem value="add_new" id="add_new" />
+                <label
+                  htmlFor="add_new"
+                  className="cursor-pointer text-sm font-medium"
+                >
+                  Adicionar novo endereço
+                </label>
+              </div>
+            </Card>
+          </>
+        </RadioGroup>{" "}
+        {selectedAddress && selectedAddress !== "add_new" && (
+          <div className="flex justify-end pt-4">
+            <Button
+              onClick={handleContinueWithExistingAddress}
+              disabled={updateCartShippingAddressMutation.isPending}
+              className="w-full rounded-full md:w-auto"
+            >
+              {updateCartShippingAddressMutation.isPending
+                ? "Processando..."
+                : "Continuar com o pagamento"}
+            </Button>
+          </div>
+        )}
         {selectedAddress === "add_new" && (
           <Card className="mt-4">
             <CardHeader>
