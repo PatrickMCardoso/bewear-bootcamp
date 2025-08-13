@@ -2,6 +2,7 @@ import { relations } from "drizzle-orm";
 import {
   boolean,
   integer,
+  pgEnum,
   pgTable,
   text,
   timestamp,
@@ -31,6 +32,7 @@ export const userRelations = relations(userTable, (params) => {
       fields: [userTable.id],
       references: [cartTable.userId],
     }),
+    orders: params.many(orderTable),
   };
 });
 
@@ -133,6 +135,8 @@ export const productVariantRelations = relations(
         fields: [productVariantTable.productId],
         references: [productTable.id],
       }),
+      cartItems: params.many(cartItemTable),
+      orderItems: params.many(orderItemTable),
     };
   },
 );
@@ -142,18 +146,18 @@ export const shippingAddressTable = pgTable("shipping_address", {
   userId: text("user_id")
     .notNull()
     .references(() => userTable.id, { onDelete: "cascade" }),
-  recipientName: text().notNull(),
+  recipientName: text("recipient_name").notNull(),
   street: text().notNull(),
   number: text().notNull(),
   complement: text(),
   city: text().notNull(),
   state: text().notNull(),
   neighborhood: text().notNull(),
-  zipCode: text().notNull(),
+  zipCode: text("zip_code").notNull(),
   country: text().notNull(),
   phone: text().notNull(),
   email: text().notNull(),
-  cpfOrCnpj: text().notNull(),
+  cpfOrCnpj: text("cpf_or_cnpj").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -169,6 +173,7 @@ export const shippingAddressRelations = relations(
         fields: [shippingAddressTable.id],
         references: [cartTable.shippingAddressId],
       }),
+      orders: params.many(orderTable),
     };
   },
 );
@@ -219,6 +224,78 @@ export const cartItemRelations = relations(cartItemTable, (params) => {
     }),
     productVariant: params.one(productVariantTable, {
       fields: [cartItemTable.productVariantId],
+      references: [productVariantTable.id],
+    }),
+  };
+});
+
+export const orderStatus = pgEnum("order_status", [
+  "pending",
+  "paid",
+  "canceled",
+]);
+
+export const orderTable = pgTable("order", {
+  id: uuid().primaryKey().defaultRandom(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => userTable.id, { onDelete: "cascade" }),
+  shippingAddressId: uuid("shipping_address_id").references(
+    () => shippingAddressTable.id,
+    { onDelete: "set null" },
+  ),
+  recipientName: text("recipient_name").notNull(),
+  street: text().notNull(),
+  number: text().notNull(),
+  complement: text(),
+  city: text().notNull(),
+  state: text().notNull(),
+  neighborhood: text().notNull(),
+  zipCode: text("zip_code").notNull(),
+  country: text().notNull(),
+  phone: text().notNull(),
+  email: text().notNull(),
+  cpfOrCnpj: text("cpf_or_cnpj").notNull(),
+  totalPriceInCents: integer("total_price_in_cents").notNull(),
+  status: orderStatus().notNull().default("pending"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const orderRelations = relations(orderTable, (params) => {
+  return {
+    user: params.one(userTable, {
+      fields: [orderTable.userId],
+      references: [userTable.id],
+    }),
+    shippingAddress: params.one(shippingAddressTable, {
+      fields: [orderTable.shippingAddressId],
+      references: [shippingAddressTable.id],
+    }),
+    items: params.many(orderItemTable),
+  };
+});
+
+export const orderItemTable = pgTable("order_item", {
+  id: uuid().primaryKey().defaultRandom(),
+  orderId: uuid("order_id")
+    .notNull()
+    .references(() => orderTable.id, { onDelete: "cascade" }),
+  productVariantId: uuid("product_variant_id")
+    .notNull()
+    .references(() => productVariantTable.id, { onDelete: "restrict" }),
+  quantity: integer().notNull(),
+  priceInCents: integer("price_in_cents").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const orderItemRelations = relations(orderItemTable, (params) => {
+  return {
+    order: params.one(orderTable, {
+      fields: [orderItemTable.orderId],
+      references: [orderTable.id],
+    }),
+    productVariant: params.one(productVariantTable, {
+      fields: [orderItemTable.productVariantId],
       references: [productVariantTable.id],
     }),
   };

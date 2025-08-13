@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { PatternFormat } from "react-number-format";
@@ -27,6 +28,8 @@ import { shippingAddressTable } from "@/db/schema";
 import { useCreateShippingAddress } from "@/hooks/mutations/use-create-shipping-address";
 import { useUpdateCartShippingAddress } from "@/hooks/mutations/use-update-cart-shipping-address";
 
+import { formatAddress } from "../../helpers/address";
+
 interface AddressesProps {
   shippingAddresses: (typeof shippingAddressTable.$inferSelect)[];
   currentShippingAddressId?: string | null;
@@ -36,6 +39,7 @@ const Addresses = ({
   shippingAddresses,
   currentShippingAddressId,
 }: AddressesProps) => {
+  const router = useRouter();
   const [selectedAddress, setSelectedAddress] = useState<string | null>(() => {
     return currentShippingAddressId ?? null;
   });
@@ -92,7 +96,7 @@ const Addresses = ({
     });
   };
 
-  const handleContinueWithExistingAddress = () => {
+  const handleGoToPayment = () => {
     if (!selectedAddress || selectedAddress === "add_new") return;
 
     updateCartShippingAddressMutation.mutate(
@@ -103,6 +107,7 @@ const Addresses = ({
             toast.success(
               "Endereço selecionado! Continuando para o pagamento...",
             );
+            router.push("/cart/confirmation");
           } else {
             toast.error(result.message);
           }
@@ -140,16 +145,7 @@ const Addresses = ({
                     aria-label={`Selecionar endereço: ${address.recipientName}, ${address.street}, ${address.number}`}
                   >
                     <div className="text-sm font-medium">
-                      {address.recipientName}, {address.street},{" "}
-                      {address.number}
-                      {address.complement && `, ${address.complement}`},{" "}
-                      {address.neighborhood}, {address.city} - {address.state},
-                      CEP:{" "}
-                      <PatternFormat
-                        value={address.zipCode}
-                        format="#####-###"
-                        displayType="text"
-                      />
+                      {formatAddress(address)}
                     </div>
                   </Label>
                 </div>
@@ -172,7 +168,7 @@ const Addresses = ({
         {selectedAddress && selectedAddress !== "add_new" && (
           <div className="flex justify-end pt-4">
             <Button
-              onClick={handleContinueWithExistingAddress}
+              onClick={handleGoToPayment}
               disabled={updateCartShippingAddressMutation.isPending}
               className="w-full rounded-full md:w-auto"
             >
