@@ -4,7 +4,6 @@ import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import Stripe from "stripe";
 
-import cartItem from "@/components/common/cart-item";
 import { db } from "@/db";
 import { orderItemTable, orderTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
