@@ -50,9 +50,9 @@ const IdentificationPage = async () => {
   );
 
   return (
-    <div>
+    <div className="flex min-h-screen flex-col">
       <Header />
-      <div className="space-y-4 px-5">
+      <div className="flex-1 space-y-4 px-5">
         <Addresses
           shippingAddresses={shippingAddresses}
           currentShippingAddressId={cart.shippingAddressId}
@@ -70,9 +70,7 @@ const IdentificationPage = async () => {
           }))}
         />
       </div>
-      <div className="mt-12">
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 };
