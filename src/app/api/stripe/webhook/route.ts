@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
+import { clearCart } from "@/actions/clear-cart";
 import { db } from "@/db";
 import { orderTable } from "@/db/schema";
 
@@ -25,17 +26,28 @@ export const POST = async (request: Request) => {
 
   if (event.type === "checkout.session.completed") {
     console.log("Checkout session completed");
-    const session = event.data.object as Stripe.Checkout.Session;
+    const session = event.data.object;
     const orderId = session.metadata?.orderId;
     if (!orderId) {
       return NextResponse.error();
     }
+
+    const order = await db.query.orderTable.findFirst({
+      where: eq(orderTable.id, orderId),
+    });
+
+    if (!order) {
+      return NextResponse.error();
+    }
+
     await db
       .update(orderTable)
       .set({
         status: "paid",
       })
       .where(eq(orderTable.id, orderId));
+
+    await clearCart({ userId: order.userId });
   }
 
   return NextResponse.json({ received: true });

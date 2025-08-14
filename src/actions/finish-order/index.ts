@@ -4,12 +4,7 @@ import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 
 import { db } from "@/db";
-import {
-  cartItemTable,
-  cartTable,
-  orderItemTable,
-  orderTable,
-} from "@/db/schema";
+import { cartTable, orderItemTable, orderTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 
 export const finishOrder = async () => {
@@ -69,7 +64,7 @@ export const finishOrder = async () => {
         number: cart.shippingAddress.number,
         userId: session.user.id,
         totalPriceInCents,
-        shippingAddressId: cart.shippingAddress!.id,
+        shippingAddressId: cart.shippingAddress.id,
       })
       .returning();
 
@@ -87,8 +82,6 @@ export const finishOrder = async () => {
       }));
 
     await tx.insert(orderItemTable).values(orderItemsPayload);
-    await tx.delete(cartTable).where(eq(cartTable.id, cart.id));
-    await tx.delete(cartItemTable).where(eq(cartItemTable.cartId, cart.id));
   });
   if (!orderId) {
     throw new Error("Order creation failed");

@@ -30,7 +30,6 @@ const FinishOrderButton = () => {
   };
 
   return (
-    <>
       <Button
         className="w-full rounded-full"
         size="lg"
@@ -42,7 +41,6 @@ const FinishOrderButton = () => {
         )}
         Finalizar compra
       </Button>
-    </>
   );
 };
 
