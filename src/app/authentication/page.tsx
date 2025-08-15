@@ -1,3 +1,4 @@
+import Footer from "@/components/common/footer";
 import { Header } from "@/components/common/header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -6,10 +7,10 @@ import SignUpForm from "./components/sign-up-form";
 
 const Authentication = async () => {
   return (
-    <>
+    <div className="flex min-h-screen flex-col">
       <Header />
 
-      <div className="flex w-full flex-col gap-6 p-5">
+      <div className="flex w-full flex-1 flex-col gap-6 p-5">
         <Tabs defaultValue="sign-in">
           <TabsList>
             <TabsTrigger value="sign-in">Entrar</TabsTrigger>
@@ -23,7 +24,10 @@ const Authentication = async () => {
           </TabsContent>
         </Tabs>
       </div>
-    </>
+      <div className="mt-5">
+        <Footer />
+      </div>
+    </div>
   );
 };
 

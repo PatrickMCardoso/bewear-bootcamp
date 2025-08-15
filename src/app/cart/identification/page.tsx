@@ -70,7 +70,9 @@ const IdentificationPage = async () => {
           }))}
         />
       </div>
-      <Footer />
+      <div className="mt-5">
+        <Footer />
+      </div>
     </div>
   );
 };
