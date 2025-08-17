@@ -5,6 +5,7 @@ import { Loader2 } from "lucide-react";
 
 import { addProductToCart } from "@/actions/add-cart-product";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/sonner";
 
 interface AddToCartButtonProps {
   productVariantId: string;
@@ -25,6 +26,10 @@ const AddToCartButton = ({
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
+      toast.success("Produto adicionado ao carrinho!");
+    },
+    onError: () => {
+      toast.error("Erro ao adicionar produto ao carrinho.");
     },
   });
   return (

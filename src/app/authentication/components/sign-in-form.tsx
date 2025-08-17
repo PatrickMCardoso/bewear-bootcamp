@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import z from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -24,6 +23,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/sonner";
 import { authClient } from "@/lib/auth-client";
 
 const formSchema = z.object({
@@ -49,6 +49,7 @@ const SignInForm = () => {
       password: values.password,
       fetchOptions: {
         onSuccess: () => {
+          toast.success("Login realizado com sucesso!");
           router.push("/");
         },
         onError: (ctx) => {

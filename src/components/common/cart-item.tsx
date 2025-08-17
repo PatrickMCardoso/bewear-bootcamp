@@ -1,6 +1,5 @@
 import { MinusIcon, PlusIcon, TrashIcon } from "lucide-react";
 import Image from "next/image";
-import { toast } from "sonner";
 
 import { formatCentsToBRL } from "@/helper/money";
 import { useDecreaseCartProduct } from "@/hooks/mutations/use-decrease-cart-product";
@@ -28,43 +27,21 @@ const CartItem = ({
   productVariantPriceInCents,
   quantity,
 }: CartItemProps) => {
-  
   const removeProductFromCartMutation = useRemoveProductFromCart(id);
   const decreaseCartProductQuantityMutation = useDecreaseCartProduct(id);
   const increaseCartProductQuantityMutation =
     useIncreaseCartProduct(productVariantId);
 
   const handleDeleteClick = () => {
-    removeProductFromCartMutation.mutate(undefined, {
-      onSuccess: () => {
-        toast.success("Produto removido do carrinho.");
-      },
-      onError: () => {
-        toast.error("Erro ao remover produto do carrinho.");
-      },
-    });
+    removeProductFromCartMutation.mutate();
   };
 
   const handleDecreaseQuantityClick = () => {
-    decreaseCartProductQuantityMutation.mutate(undefined, {
-      onSuccess: () => {
-        toast.success("Quantidade do produto diminuída.");
-      },
-      onError: () => {
-        toast.error("Erro ao diminuir quantidade do produto.");
-      },
-    });
+    decreaseCartProductQuantityMutation.mutate();
   };
 
   const handleIncreaseQuantityClick = () => {
-    increaseCartProductQuantityMutation.mutate(undefined, {
-      onSuccess: () => {
-        toast.success("Quantidade do produto aumentada.");
-      },
-      onError: () => {
-        toast.error("Erro ao aumentar quantidade do produto.");
-      },
-    });
+    increaseCartProductQuantityMutation.mutate();
   };
 
   return (

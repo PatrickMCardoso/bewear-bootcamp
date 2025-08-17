@@ -2,9 +2,9 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 
 import { addProductToCart } from "@/actions/add-cart-product";
+import { toast } from "@/components/ui/sonner";
 import { authClient } from "@/lib/auth-client";
 
 interface UseBuyNowParams {
@@ -34,6 +34,7 @@ export const useBuyNow = ({ productVariantId, quantity }: UseBuyNowParams) => {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
 
       if (session?.user) {
+        toast.success("Produto adicionado! Redirecionando para o carrinho...");
         router.push("/cart/identification");
       }
     },

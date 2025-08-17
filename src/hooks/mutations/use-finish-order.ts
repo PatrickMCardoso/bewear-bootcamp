@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { finishOrder } from "@/actions/finish-order";
+import { toast } from "@/components/ui/sonner";
 
 import { getUseCartQueryKey } from "../queries/use-cart";
 
@@ -15,6 +16,10 @@ export const useFinishOrder = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: getUseCartQueryKey() });
+      toast.success("Pedido finalizado! Redirecionando para pagamento...");
+    },
+    onError: () => {
+      toast.error("Erro ao finalizar pedido. Tente novamente.");
     },
   });
 };

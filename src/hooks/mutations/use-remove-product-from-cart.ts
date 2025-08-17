@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { removeProductFromCart } from "@/actions/remove-cart-product";
+import { toast } from "@/components/ui/sonner";
 
 import { getUseCartQueryKey } from "../queries/use-cart";
 
@@ -14,6 +15,10 @@ export const useRemoveProductFromCart = (cartItemId: string) => {
     mutationFn: () => removeProductFromCart({ cartItemId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: getUseCartQueryKey() });
+      toast.success("Produto removido do carrinho!");
+    },
+    onError: () => {
+      toast.error("Erro ao remover produto do carrinho.");
     },
   });
 };

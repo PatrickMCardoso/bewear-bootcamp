@@ -12,8 +12,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
 
+import { toast } from "@/components/ui/sonner";
 import { authClient } from "@/lib/auth-client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -53,6 +53,7 @@ export const Header = () => {
 
   const handleLogout = () => {
     authClient.signOut();
+    toast.success("Logout realizado com sucesso!");
     setMenuOpen(false);
   };
 

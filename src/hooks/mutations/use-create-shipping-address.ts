@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { createShippingAddress } from "@/actions/create-shipping-address";
 import type { CreateShippingAddressSchema } from "@/actions/create-shipping-address/schema";
+import { toast } from "@/components/ui/sonner";
 
 import { getShippingAddressesQueryKey } from "../queries/use-shipping-addresses";
 
@@ -14,10 +15,18 @@ export const useCreateShippingAddress = () => {
     mutationKey: getCreateShippingAddressMutationKey(),
     mutationFn: (data: CreateShippingAddressSchema) =>
       createShippingAddress(data),
-    onSuccess: () => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({
         queryKey: getShippingAddressesQueryKey(),
       });
+      if (result.success) {
+        toast.success("Endereço criado com sucesso!");
+      } else {
+        toast.error(result.message || "Erro ao criar endereço.");
+      }
+    },
+    onError: () => {
+      toast.error("Erro ao criar endereço.");
     },
   });
 };
