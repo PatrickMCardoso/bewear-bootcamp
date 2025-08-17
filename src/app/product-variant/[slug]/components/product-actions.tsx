@@ -1,9 +1,10 @@
 "use client";
 
-import { MinusIcon, PlusIcon } from "lucide-react";
+import { Loader2, MinusIcon, PlusIcon } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { useBuyNow } from "@/hooks/mutations/use-buy-now";
 
 import AddToCartButton from "./add-to-cart-button";
 
@@ -13,6 +14,10 @@ interface ProductActionsProps {
 
 const ProductActions = ({ productVariantId }: ProductActionsProps) => {
   const [quantity, setQuantity] = useState(1);
+  const { mutate: buyNow, isPending: isBuyNowPending } = useBuyNow({
+    productVariantId,
+    quantity,
+  });
 
   const handleDecrement = () => {
     setQuantity((prev) => (prev > 1 ? prev - 1 : prev));
@@ -20,6 +25,10 @@ const ProductActions = ({ productVariantId }: ProductActionsProps) => {
 
   const handleIncrement = () => {
     setQuantity((prev) => prev + 1);
+  };
+
+  const handleBuyNow = () => {
+    buyNow();
   };
 
   return (
@@ -43,7 +52,13 @@ const ProductActions = ({ productVariantId }: ProductActionsProps) => {
           productVariantId={productVariantId}
           quantity={quantity}
         />
-        <Button className="rounded-full" size="lg">
+        <Button
+          className="rounded-full"
+          size="lg"
+          onClick={handleBuyNow}
+          disabled={isBuyNowPending}
+        >
+          {isBuyNowPending && <Loader2 className="mr-2 animate-spin" />}
           Comprar agora
         </Button>
       </div>

@@ -1,6 +1,6 @@
 import { desc } from "drizzle-orm";
-import Image from "next/image";
 
+import { Banner } from "@/components/common/banner";
 import BrandList from "@/components/common/brand-list";
 import CategorySelector from "@/components/common/category-selector";
 import Footer from "@/components/common/footer";
@@ -40,13 +40,10 @@ const Home = async () => {
       <Header />
       <div className="space-y-6">
         <div className="px-5">
-          <Image
+          <Banner
             src="/banner-01.png"
             alt="Leve uma vida com estilo"
-            height={0}
-            width={0}
-            sizes="100vw"
-            className="h-auto w-full"
+            scrollDirection="down"
           />
         </div>
 
@@ -57,13 +54,10 @@ const Home = async () => {
           <CategorySelector categories={categories} />
         </div>
         <div className="px-5">
-          <Image
+          <Banner
             src="/banner-02.png"
             alt="Leve uma vida com estilo"
-            height={0}
-            width={0}
-            sizes="100vw"
-            className="h-auto w-full"
+            scrollDirection="up"
           />
         </div>
         <ProductList products={newlyCreatedProducts} title="Novos produtos" />
