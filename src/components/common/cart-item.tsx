@@ -54,35 +54,37 @@ const CartItem = ({
           height={78}
           className="rounded-lg"
         />
-        <div className="flex flex-col gap-1">
-          <p className="text-sm font-medium">{productName}</p>
-          <p className="text-muted-foreground text-xs font-medium">
+        <div className="flex min-w-0 flex-1 flex-col gap-1 pr-4">
+          <p className="line-clamp-1 text-sm leading-tight font-medium">
+            {productName}
+          </p>
+          <p className="text-muted-foreground line-clamp-1 text-xs font-medium">
             {productVariantName}
           </p>
-          <div className="flex w-[100px] items-center justify-between rounded-lg border p-1">
+          <div className="flex w-[80px] items-center justify-between rounded-lg border p-0.5">
             <Button
-              className="h-4 w-4"
+              className="h-3 w-3 p-0"
               variant="ghost"
               onClick={handleDecreaseQuantityClick}
             >
-              <MinusIcon />
+              <MinusIcon className="h-2 w-2" />
             </Button>
             <p className="text-xs font-medium">{quantity}</p>
             <Button
-              className="h-4 w-4"
+              className="h-3 w-3 p-0"
               variant="ghost"
               onClick={handleIncreaseQuantityClick}
             >
-              <PlusIcon />
+              <PlusIcon className="h-2 w-2" />
             </Button>
           </div>
         </div>
       </div>
-      <div className="flex flex-col items-end justify-center gap-1">
+      <div className="flex flex-shrink-0 flex-col items-end justify-center gap-1">
         <Button variant="outline" size="icon" onClick={handleDeleteClick}>
           <TrashIcon />
         </Button>
-        <p className="text-sm font-bold">
+        <p className="text-sm font-bold whitespace-nowrap">
           {formatCentsToBRL(productVariantPriceInCents)}
         </p>
       </div>
