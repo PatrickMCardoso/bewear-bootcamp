@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { CheckoutProgress } from "@/components/common/checkout-progress";
 import Footer from "@/components/common/footer";
 import { Header } from "@/components/common/header";
 import { db } from "@/db";
@@ -53,6 +54,7 @@ const IdentificationPage = async () => {
     <div className="flex min-h-screen flex-col">
       <Header />
       <div className="flex-1 space-y-4 px-5">
+        <CheckoutProgress currentStep="identification" />
         <Addresses
           shippingAddresses={shippingAddresses}
           currentShippingAddressId={cart.shippingAddressId}

@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { CheckoutProgress } from "@/components/common/checkout-progress";
 import Footer from "@/components/common/footer";
 import { Header } from "@/components/common/header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -51,6 +52,7 @@ const ConfirmationPage = async () => {
     <div>
       <Header />
       <div className="space-y-4 px-5">
+        <CheckoutProgress currentStep="payment" />
         <Card>
           <CardHeader>
             <CardTitle>Identificação</CardTitle>
