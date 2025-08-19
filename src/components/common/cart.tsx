@@ -34,7 +34,12 @@ export const Cart = () => {
 
   return (
     <>
-      <Button variant="outline" size="icon" onClick={handleCartClick}>
+      <Button
+        variant="outline"
+        size="icon"
+        onClick={handleCartClick}
+        data-cart-trigger
+      >
         <ShoppingCart />
       </Button>
 

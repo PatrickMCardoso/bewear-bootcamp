@@ -47,7 +47,6 @@ export const Header = () => {
       return;
     }
 
-    // Usar router.push para redirecionamento
     router.push(href);
   };
 
@@ -55,6 +54,18 @@ export const Header = () => {
     authClient.signOut();
     toast.success("Logout realizado com sucesso!");
     setMenuOpen(false);
+  };
+
+  const handleCartClick = () => {
+    setMenuOpen(false);
+    setTimeout(() => {
+      const cartButton = document.querySelector(
+        "[data-cart-trigger]",
+      ) as HTMLButtonElement;
+      if (cartButton) {
+        cartButton.click();
+      }
+    }, 100);
   };
 
   return (
@@ -122,8 +133,8 @@ export const Header = () => {
                         Meus Pedidos
                       </Link>
                       <button
-                        className="flex items-center gap-3 text-left text-sm"
-                        onClick={() => handleMenuItemClick("/sacola")}
+                        className="flex cursor-pointer items-center gap-3 text-left text-sm"
+                        onClick={handleCartClick}
                       >
                         <ShoppingCartIcon className="h-4 w-4" />
                         Carrinho
@@ -239,7 +250,15 @@ export const Header = () => {
                       </button>
                       <button
                         className="text-muted-foreground flex items-center gap-3 text-left text-sm"
-                        onClick={() => handleMenuItemClick("/cart", true)}
+                        onClick={() => {
+                          if (!session?.user) {
+                            toast.error(
+                              "Você precisa fazer login para acessar o carrinho.",
+                            );
+                            return;
+                          }
+                          handleCartClick();
+                        }}
                       >
                         <ShoppingCartIcon className="h-4 w-4" />
                         Carrinho
