@@ -31,7 +31,9 @@ const formSchema = z
     name: z.string("Nome inválido.").trim().min(1, "Nome inválido."),
     email: z.email("E-mail inválido."),
     password: z.string("Senha inválida.").min(8, "Senha inválida."),
-    passwordConfirmation: z.string("Senha inválida.").min(8, "Senha inválida."),
+    passwordConfirmation: z
+      .string("Senha inválida.")
+      .min(8, "A senha deve ter no mínimo 8 caracteres."),
   })
   .refine(
     (data) => {
