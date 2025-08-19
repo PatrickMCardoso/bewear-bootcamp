@@ -25,13 +25,17 @@ export const useBuyNow = ({ productVariantId, quantity }: UseBuyNowParams) => {
         throw new Error("Authentication required");
       }
 
-      return addProductToCart({
+      return await addProductToCart({
         productVariantId,
         quantity,
       });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["cart"],
+        exact: true,
+        refetchType: "active",
+      });
 
       if (session?.user) {
         toast.success("Produto adicionado! Redirecionando para o carrinho...");

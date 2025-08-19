@@ -13,10 +13,14 @@ export const useUpdateCartShippingAddress = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: getUpdateCartShippingAddressMutationKey(),
-    mutationFn: (data: UpdateCartShippingAddressSchema) =>
-      updateCartShippingAddress(data),
-    onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: getUseCartQueryKey() });
+    mutationFn: async (data: UpdateCartShippingAddressSchema) =>
+      await updateCartShippingAddress(data),
+    onSuccess: async (result) => {
+      await queryClient.invalidateQueries({
+        queryKey: getUseCartQueryKey(),
+        exact: true,
+        refetchType: "active",
+      });
       if (result.success) {
         toast.success("Endereço de entrega atualizado!");
       } else {

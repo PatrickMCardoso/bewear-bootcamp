@@ -12,9 +12,13 @@ export const useDecreaseCartProduct = (cartItemId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: getDecreaseCartProductMutationKey(cartItemId),
-    mutationFn: () => decreaseCartProductQuantity({ cartItemId }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: getUseCartQueryKey() });
+    mutationFn: async () => await decreaseCartProductQuantity({ cartItemId }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: getUseCartQueryKey(),
+        exact: true,
+        refetchType: "active",
+      });
       toast.success("Quantidade diminuída!");
     },
     onError: () => {

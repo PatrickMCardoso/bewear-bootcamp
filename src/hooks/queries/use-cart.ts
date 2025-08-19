@@ -8,5 +8,7 @@ export const useCart = () => {
   return useQuery({
     queryKey: getUseCartQueryKey(),
     queryFn: () => getCart(),
+    staleTime: 0,
+    refetchOnWindowFocus: true,
   });
 };

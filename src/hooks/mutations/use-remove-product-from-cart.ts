@@ -12,9 +12,13 @@ export const useRemoveProductFromCart = (cartItemId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: getRemoveProductFromCartMutationKey(cartItemId),
-    mutationFn: () => removeProductFromCart({ cartItemId }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: getUseCartQueryKey() });
+    mutationFn: async () => await removeProductFromCart({ cartItemId }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: getUseCartQueryKey(),
+        exact: true,
+        refetchType: "active",
+      });
       toast.success("Produto removido do carrinho!");
     },
     onError: () => {

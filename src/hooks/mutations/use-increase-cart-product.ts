@@ -5,16 +5,21 @@ import { toast } from "@/components/ui/sonner";
 
 import { getUseCartQueryKey } from "../queries/use-cart";
 
-export const getIncreaseCartProductMutationKey = (cartItemId: string) =>
-  ["increase-cart-product-quantity", cartItemId] as const;
+export const getIncreaseCartProductMutationKey = (productVariantId: string) =>
+  ["increase-cart-product-quantity", productVariantId] as const;
 
 export const useIncreaseCartProduct = (productVariantId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: getIncreaseCartProductMutationKey(productVariantId),
-    mutationFn: () => addProductToCart({ productVariantId, quantity: 1 }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: getUseCartQueryKey() });
+    mutationFn: async () =>
+      await addProductToCart({ productVariantId, quantity: 1 }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: getUseCartQueryKey(),
+        exact: true,
+        refetchType: "active",
+      });
       toast.success("Quantidade aumentada!");
     },
     onError: () => {
