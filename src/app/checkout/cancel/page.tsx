@@ -20,7 +20,7 @@ const CheckoutCancelPage = () => {
       <Dialog open={true} onOpenChange={() => {}}>
         <DialogContent className="text-center">
           <Image
-            src="/illustration.svg"
+            src="/illustration-02.png"
             alt="Cancel"
             width={300}
             height={300}

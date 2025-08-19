@@ -63,7 +63,7 @@ const Orders = ({ orders }: OrdersProps) => {
                 <AccordionContent>
                   {order.items.map((product) => (
                     <div
-                      className="flex items-center justify-between"
+                      className="mt-2 flex items-center justify-between"
                       key={product.id}
                     >
                       <div className="flex items-center gap-4">
