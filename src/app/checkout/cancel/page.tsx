@@ -1,7 +1,7 @@
 "use client";
 
 import { DialogTitle } from "@radix-ui/react-dialog";
-import Image from "next/image";
+import { XCircle } from "lucide-react";
 import Link from "next/link";
 
 import { Header } from "@/components/common/header";
@@ -19,16 +19,10 @@ const CheckoutCancelPage = () => {
       <Header />
       <Dialog open={true} onOpenChange={() => {}}>
         <DialogContent className="text-center">
-          <Image
-            src="/illustration-02.png"
-            alt="Cancel"
-            width={300}
-            height={300}
-            className="mx-auto"
-          />
-          <DialogTitle className="mt-4 text-2xl">
-            Pagamento Cancelado
-          </DialogTitle>
+          <div className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-red-100">
+            <XCircle className="h-12 w-12 text-red-500" />
+          </div>
+          <DialogTitle className="text-2xl">Pagamento Cancelado</DialogTitle>
           <DialogDescription className="font-medium">
             Seu pagamento foi cancelado. Você pode tentar novamente ou continuar
             navegando pela loja.

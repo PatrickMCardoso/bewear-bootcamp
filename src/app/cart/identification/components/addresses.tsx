@@ -375,7 +375,7 @@ const Addresses = ({
                         <FormItem>
                           <FormLabel>Estado</FormLabel>
                           <FormControl>
-                            <Input placeholder="SP" {...field} />
+                            <Input placeholder="Seu estado" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
